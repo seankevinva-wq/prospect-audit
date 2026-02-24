@@ -144,45 +144,88 @@ async function capturePageAssets(website, outputDir) {
     // 3. Brand colors from computed styles
     const colors = await page.evaluate(() => {
       function rgbToHex(rgb) {
-        const m = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/)
+        const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/)
         if (!m) return null
-        const [, r, g, b] = m.map(Number)
-        // Skip pure black, pure white, or transparent
+        const [r, g, b, a] = [Number(m[1]), Number(m[2]), Number(m[3]), m[4] !== undefined ? Number(m[4]) : 1]
+        // Skip transparent
+        if (a === 0) return null
+        // Skip pure black, pure white
         if (r === 0 && g === 0 && b === 0) return null
         if (r > 240 && g > 240 && b > 240) return null
         return [r, g, b].map(x => x.toString(16).padStart(2, '0')).join('')
       }
       function lum(rgb) {
-        const m = rgb.match(/rgb\((\d+),\s*(\d+),\s*(\d+)\)/)
+        const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)/)
         if (!m) return 128
-        const [, r, g, b] = m.map(Number)
+        const a = m[4] !== undefined ? Number(m[4]) : 1
+        if (a === 0) return 128  // transparent — treat as neutral
+        const [r, g, b] = [Number(m[1]), Number(m[2]), Number(m[3])]
         return 0.299 * r + 0.587 * g + 0.114 * b
+      }
+
+      function hasSaturation(rgb) {
+        const m = rgb.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+        if (!m) return false
+        const [r, g, b] = [Number(m[1]), Number(m[2]), Number(m[3])]
+        return (Math.max(r, g, b) - Math.min(r, g, b)) > 30
       }
 
       let accent = null, dark = null
 
-      // Dark color: nav/header background
-      for (const sel of ['header', 'nav', '[class*="navbar" i]', '[class*="header" i]', 'body']) {
+      // Dark color: check backgrounds first
+      for (const sel of ['header', 'nav', '[class*="navbar" i]', '[class*="header" i]',
+                         'footer', '[class*="footer" i]', '[class*="dark" i]', '[class*="hero" i]']) {
         const el = document.querySelector(sel)
         if (!el) continue
         const bg = getComputedStyle(el).backgroundColor
-        if (lum(bg) < 80) { dark = rgbToHex(bg); if (dark) break }
+        if (lum(bg) < 110) { dark = rgbToHex(bg); if (dark) break }
+      }
+      // Dark fallback: heading text color (brand dark on all-white sites)
+      if (!dark) {
+        for (const sel of ['h1', 'h2', 'h3']) {
+          const el = document.querySelector(sel)
+          if (!el) continue
+          const c = getComputedStyle(el).color
+          if (lum(c) < 110) { dark = rgbToHex(c); if (dark) break }
+        }
       }
 
-      // Accent: primary CTA buttons
-      const ctaSelectors = [
-        'a[class*="btn-primary" i]', 'button[class*="btn-primary" i]',
-        '.btn-primary', '.button-primary',
-        'a[class*="cta" i]', 'button[class*="cta" i]',
-        'a[class*="book" i]', 'a[class*="contact" i]',
-        '.btn', 'button[type="submit"]',
-      ]
-      for (const sel of ctaSelectors) {
-        const el = document.querySelector(sel)
-        if (!el) continue
-        const bg = getComputedStyle(el).backgroundColor
-        const l = lum(bg)
-        if (l > 20 && l < 230) { accent = rgbToHex(bg); if (accent) break }
+      // Accent: 1) nav link colors (often brand accent)
+      if (!accent) {
+        const navLinks = document.querySelectorAll('nav a, header a, [class*="nav" i] a')
+        for (const el of navLinks) {
+          const c = getComputedStyle(el).color
+          const l = lum(c)
+          if (l > 20 && l < 230 && hasSaturation(c)) { accent = rgbToHex(c); if (accent) break }
+        }
+      }
+
+      // Accent: 2) CTA button backgrounds
+      if (!accent) {
+        const ctaSelectors = [
+          'a[class*="btn-primary" i]', 'button[class*="btn-primary" i]',
+          '.btn-primary', '.button-primary',
+          'a[class*="cta" i]', 'button[class*="cta" i]',
+          'a[class*="book" i]', 'a[class*="contact" i]',
+          '.btn', 'button[type="submit"]',
+        ]
+        for (const sel of ctaSelectors) {
+          const el = document.querySelector(sel)
+          if (!el) continue
+          const bg = getComputedStyle(el).backgroundColor
+          const l = lum(bg)
+          if (l > 20 && l < 230 && hasSaturation(bg)) { accent = rgbToHex(bg); if (accent) break }
+        }
+      }
+
+      // Accent: 3) any colorful section/div backgrounds
+      if (!accent) {
+        const els = document.querySelectorAll('section, div, a, button')
+        for (const el of els) {
+          const bg = getComputedStyle(el).backgroundColor
+          const l = lum(bg)
+          if (l > 20 && l < 230 && hasSaturation(bg)) { accent = rgbToHex(bg); if (accent) break }
+        }
       }
 
       return { accent, dark }
