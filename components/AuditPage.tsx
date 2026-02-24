@@ -66,6 +66,36 @@ const WIN_LABELS = [
 
 // ── Sub-components ────────────────────────────────────────────────────────────
 
+const KEVIN_LINKS = [
+  {
+    href: 'https://www.linkedin.com/in/kevinfar/',
+    label: 'LinkedIn',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+    ),
+  },
+  {
+    href: 'https://www.youtube.com/@kevfarr',
+    label: 'YouTube',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+      </svg>
+    ),
+  },
+  {
+    href: 'https://kevfar.com/',
+    label: 'kevfar.com',
+    icon: (
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+      </svg>
+    ),
+  },
+]
+
 function StickyNav({ businessName, logoUrl, accent, dark }: {
   businessName: string
   logoUrl: string | null
@@ -78,7 +108,7 @@ function StickyNav({ businessName, logoUrl, accent, dark }: {
       style={{ background: dark }}
       aria-label="Page navigation"
     >
-      <div className="max-w-4xl mx-auto px-6 h-14 flex items-center justify-between gap-4">
+      <div className="px-6 lg:px-10 h-14 flex items-center justify-between gap-4">
         <div className="flex items-center gap-3 min-w-0">
           {logoUrl && (
             <div className="bg-white rounded-lg p-1.5 flex-shrink-0">
@@ -100,11 +130,25 @@ function StickyNav({ businessName, logoUrl, accent, dark }: {
             <a
               key={l.href}
               href={l.href}
-              className="px-3 py-1.5 text-sm text-white/50 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 min-h-[44px] flex items-center"
+              className="px-3 py-1.5 text-sm text-white/50 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 min-h-[44px] flex items-center hidden md:flex"
             >
               {l.label}
             </a>
           ))}
+          <div className="hidden lg:flex items-center gap-1 ml-2 pl-2 border-l border-white/15">
+            {KEVIN_LINKS.map(l => (
+              <a
+                key={l.href}
+                href={l.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={l.label}
+                className="p-2 text-white/40 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/50 min-h-[44px] flex items-center"
+              >
+                {l.icon}
+              </a>
+            ))}
+          </div>
           <a
             href="mailto:kevinfar@gmail.com?subject=Re: Automation Opportunity"
             className="ml-2 px-4 py-2 rounded-full text-sm font-bold transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 flex-shrink-0 min-h-[44px] flex items-center animate-pulse hover:animate-none"
@@ -126,7 +170,7 @@ function Hero({ prospect, accent, dark }: { prospect: Prospect; accent: string; 
         className="absolute inset-0 opacity-5 pointer-events-none"
         style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '32px 32px' }}
       />
-      <div className="max-w-4xl mx-auto px-6 relative">
+      <div className="px-6 lg:px-10 relative">
         <div className="flex items-center justify-between gap-8">
           <div>
             <p className="text-xs uppercase tracking-widest font-bold mb-3" style={{ color: accent }}>
@@ -136,7 +180,7 @@ function Hero({ prospect, accent, dark }: { prospect: Prospect; accent: string; 
               {prospect.business_name}
             </h1>
             <p className="text-white/40 text-sm mb-5">
-              Prepared by Kevin Farrell &nbsp;·&nbsp; kevinfar@gmail.com
+              Prepared by Kevin Farrugia &nbsp;·&nbsp; kevinfar@gmail.com
             </p>
             <div className="flex flex-wrap gap-2">
               {prospect.google_rating && (
@@ -183,7 +227,7 @@ function Section({ id, title, accent, children }: {
 }) {
   return (
     <section id={id} className="py-12 scroll-mt-14">
-      <div className="max-w-4xl mx-auto px-6">
+      <div className="px-6 lg:px-10">
         <div className="flex items-center gap-4 mb-8">
           <h2 className="text-xs font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: accent }}>
             {title}
@@ -532,11 +576,25 @@ export function AuditPage({ prospect, parsed }: Props) {
 
       {/* ── Footer CTA ───────────────────────────────────────────── */}
       <footer className="border-t border-gray-200 mt-6 bg-white" role="contentinfo">
-        <div className="max-w-4xl mx-auto px-6 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
+        <div className="px-6 lg:px-10 py-10 flex flex-col sm:flex-row items-center justify-between gap-6">
           <div>
-            <div className="font-bold text-gray-800">Kevin Farrell</div>
-            <div className="text-xs text-gray-400 mt-0.5">
+            <div className="font-bold text-gray-800">Kevin Farrugia</div>
+            <div className="text-xs text-gray-400 mt-0.5 mb-3">
               Automation Consultant &nbsp;·&nbsp; kevinfar@gmail.com
+            </div>
+            <div className="flex items-center gap-3">
+              {KEVIN_LINKS.map(l => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-1.5 text-xs text-gray-400 hover:text-gray-700 transition-colors cursor-pointer focus-visible:underline"
+                >
+                  <span className="text-gray-400">{l.icon}</span>
+                  {l.label}
+                </a>
+              ))}
             </div>
           </div>
           <a
