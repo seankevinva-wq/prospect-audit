@@ -380,15 +380,28 @@ export function AuditPage({ prospect, parsed }: Props) {
 
       {/* ── Overview ─────────────────────────────────────────────── */}
       <Section id="overview" title="What We Found On Your Site" accent={accent}>
-        {prospect.screenshot_url && (
+        {(prospect.video_url || prospect.screenshot_url) && (
           <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-6">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={prospect.screenshot_url}
-              alt={`Screenshot of ${prospect.business_name} website`}
-              className="w-full object-cover object-top"
-              style={{ maxHeight: 380 }}
-            />
+            {prospect.video_url ? (
+              <video
+                src={prospect.video_url}
+                autoPlay
+                muted
+                loop
+                playsInline
+                className="w-full object-cover object-top"
+                style={{ maxHeight: 380 }}
+                aria-label={`Website walkthrough of ${prospect.business_name}`}
+              />
+            ) : (
+              /* eslint-disable-next-line @next/next/no-img-element */
+              <img
+                src={prospect.screenshot_url!}
+                alt={`Screenshot of ${prospect.business_name} website`}
+                className="w-full object-cover object-top"
+                style={{ maxHeight: 380 }}
+              />
+            )}
             {prospect.website && (
               <div className="px-4 py-2.5 bg-white border-t border-gray-100">
                 <a
