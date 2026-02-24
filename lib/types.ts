@@ -36,6 +36,7 @@ export interface Prospect {
   pitch_md: string | null
   logo_url: string | null
   screenshot_url: string | null
+  video_url: string | null
   brand_accent: string | null
   brand_dark: string | null
   page_views: number
