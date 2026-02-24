@@ -424,46 +424,54 @@ export function AuditPage({ prospect, parsed }: Props) {
 
       {/* ── Overview ─────────────────────────────────────────────── */}
       <Section id="overview" title="What We Found On Your Site" accent={accent}>
-        {(prospect.video_url || prospect.screenshot_url) && (
-          <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm mb-6">
-            {prospect.video_url ? (
-              <video
-                src={prospect.video_url}
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="w-full object-cover object-top"
-                style={{ maxHeight: 380 }}
-                aria-label={`Website walkthrough of ${prospect.business_name}`}
-              />
-            ) : (
-              /* eslint-disable-next-line @next/next/no-img-element */
-              <img
-                src={prospect.screenshot_url!}
-                alt={`Screenshot of ${prospect.business_name} website`}
-                className="w-full object-cover object-top"
-                style={{ maxHeight: 380 }}
-              />
-            )}
-            {prospect.website && (
-              <div className="px-4 py-2.5 bg-white border-t border-gray-100">
-                <a
-                  href={prospect.website}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer focus-visible:underline"
-                >
-                  {prospect.website}
-                </a>
+        <div className={`flex gap-6 ${(prospect.video_url || prospect.screenshot_url) ? 'flex-col lg:flex-row' : ''}`}>
+          {/* Video / screenshot — left column */}
+          {(prospect.video_url || prospect.screenshot_url) && (
+            <div className="lg:w-1/2 flex-shrink-0">
+              <div className="rounded-2xl overflow-hidden border border-gray-200 shadow-sm h-full flex flex-col">
+                <div className="flex-1 min-h-0">
+                  {prospect.video_url ? (
+                    <video
+                      src={prospect.video_url}
+                      autoPlay
+                      muted
+                      loop
+                      playsInline
+                      className="w-full h-full object-cover object-top"
+                      style={{ maxHeight: 420 }}
+                      aria-label={`Website walkthrough of ${prospect.business_name}`}
+                    />
+                  ) : (
+                    /* eslint-disable-next-line @next/next/no-img-element */
+                    <img
+                      src={prospect.screenshot_url!}
+                      alt={`Screenshot of ${prospect.business_name} website`}
+                      className="w-full h-full object-cover object-top"
+                      style={{ maxHeight: 420 }}
+                    />
+                  )}
+                </div>
+                {prospect.website && (
+                  <div className="px-4 py-2.5 bg-white border-t border-gray-100 flex-shrink-0">
+                    <a
+                      href={prospect.website}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-xs text-gray-400 hover:text-gray-600 transition-colors cursor-pointer focus-visible:underline"
+                    >
+                      {prospect.website}
+                    </a>
+                  </div>
+                )}
               </div>
-            )}
+            </div>
+          )}
+          {/* Observations — right column */}
+          <div className="flex-1 space-y-3">
+            {parsed.observations.map((obs, i) => (
+              <ObservationCard key={i} text={obs} accent={accent} />
+            ))}
           </div>
-        )}
-        <div className="space-y-3">
-          {parsed.observations.map((obs, i) => (
-            <ObservationCard key={i} text={obs} accent={accent} />
-          ))}
         </div>
       </Section>
 
