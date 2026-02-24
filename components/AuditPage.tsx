@@ -223,17 +223,19 @@ function Hero({ prospect, accent, dark }: { prospect: Prospect; accent: string; 
 }
 
 function Section({ id, title, accent, children }: {
-  id: string; title: string; accent: string; children: React.ReactNode
+  id: string; title?: string; accent: string; children: React.ReactNode
 }) {
   return (
     <section id={id} className="py-12 scroll-mt-14">
       <div className="px-6 lg:px-10">
-        <div className="flex items-center gap-4 mb-8">
-          <h2 className="text-xs font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: accent }}>
-            {title}
-          </h2>
-          <div className="flex-1 h-px bg-gray-100" />
-        </div>
+        {title && (
+          <div className="flex items-center gap-4 mb-8">
+            <h2 className="text-xs font-bold uppercase tracking-widest whitespace-nowrap" style={{ color: accent }}>
+              {title}
+            </h2>
+            <div className="flex-1 h-px bg-gray-100" />
+          </div>
+        )}
         {children}
       </div>
     </section>
@@ -423,8 +425,8 @@ export function AuditPage({ prospect, parsed }: Props) {
       <Hero prospect={prospect} accent={accent} dark={dark} />
 
       {/* ── Overview ─────────────────────────────────────────────── */}
-      <Section id="overview" title="What We Found On Your Site" accent={accent}>
-        <div className={`flex gap-6 ${(prospect.video_url || prospect.screenshot_url) ? 'flex-col lg:flex-row' : ''}`}>
+      <Section id="overview" accent={accent}>
+        <div className={`flex gap-8 ${(prospect.video_url || prospect.screenshot_url) ? 'flex-col lg:flex-row' : ''}`}>
           {/* Video / screenshot — left column */}
           {(prospect.video_url || prospect.screenshot_url) && (
             <div className="lg:w-1/2 flex-shrink-0">
@@ -467,10 +469,15 @@ export function AuditPage({ prospect, parsed }: Props) {
             </div>
           )}
           {/* Observations — right column */}
-          <div className="flex-1 space-y-3">
-            {parsed.observations.map((obs, i) => (
-              <ObservationCard key={i} text={obs} accent={accent} />
-            ))}
+          <div className="flex-1">
+            <h2 className="text-3xl font-bold text-gray-900 mb-6 leading-tight">
+              What We Found<br />On Your Site
+            </h2>
+            <div className="space-y-3">
+              {parsed.observations.map((obs, i) => (
+                <ObservationCard key={i} text={obs} accent={accent} />
+              ))}
+            </div>
           </div>
         </div>
       </Section>
